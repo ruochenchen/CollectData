@@ -51,3 +51,7 @@ E:\Github\yiyuan\checkdataCollect\bin\Debug\Interop.ACTIVEXLib.dll
 E:\Github\yiyuan\checkdataCollect\obj\x86\Debug\checkdataCollect.Form1.resources
 E:\Github\yiyuan\checkdataCollect\obj\x86\Debug\checkdataCollect.Properties.Resources.resources
 E:\Github\yiyuan\checkdataCollect\obj\x86\Debug\checkdataCollect.csproj.GenerateResource.Cache
+E:\Git\collectdata\bin\Debug\checkdataCollect.exe.config
+E:\Git\collectdata\obj\x86\Debug\checkdataCollect.csproj.ResolveComReference.cache
+E:\Git\collectdata\obj\x86\Debug\checkdataCollect.exe
+E:\Git\collectdata\obj\x86\Debug\checkdataCollect.pdb
