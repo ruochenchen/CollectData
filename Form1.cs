@@ -43,6 +43,10 @@ namespace checkdataCollect
 
 
 
+
+
+
+
         // private object threadStart = new object();               //开启子线程的标识
         private bool threadStart = false;
         Microsoft.Office.Interop.Excel.Application app;
