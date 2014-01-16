@@ -42,6 +42,7 @@ namespace checkdataCollect
             this.label3 = new System.Windows.Forms.Label();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.button_AddData = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -60,7 +61,7 @@ namespace checkdataCollect
             // 
             this.collectbtn.BackColor = System.Drawing.Color.Transparent;
             this.collectbtn.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.collectbtn.Location = new System.Drawing.Point(115, 210);
+            this.collectbtn.Location = new System.Drawing.Point(101, 210);
             this.collectbtn.Name = "collectbtn";
             this.collectbtn.Size = new System.Drawing.Size(93, 44);
             this.collectbtn.TabIndex = 1;
@@ -110,7 +111,7 @@ namespace checkdataCollect
             // 
             this.button1.BackColor = System.Drawing.Color.Transparent;
             this.button1.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button1.Location = new System.Drawing.Point(379, 210);
+            this.button1.Location = new System.Drawing.Point(442, 210);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(115, 44);
             this.button1.TabIndex = 6;
@@ -158,13 +159,27 @@ namespace checkdataCollect
             this.radioButton2.UseVisualStyleBackColor = false;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
+            // button_AddData
+            // 
+            this.button_AddData.BackColor = System.Drawing.Color.Transparent;
+            this.button_AddData.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button_AddData.Location = new System.Drawing.Point(260, 210);
+            this.button_AddData.Name = "button_AddData";
+            this.button_AddData.Size = new System.Drawing.Size(129, 44);
+            this.button_AddData.TabIndex = 10;
+            this.button_AddData.Text = "添加数据";
+            this.button_AddData.UseVisualStyleBackColor = false;
+            this.button_AddData.Click += new System.EventHandler(this.button_AddData_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::checkdataCollect.Properties.Resources.shuidi01;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(622, 402);
+            this.ClientSize = new System.Drawing.Size(622, 424);
+            this.ControlBox = false;
+            this.Controls.Add(this.button_AddData);
             this.Controls.Add(this.radioButton2);
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.label3);
@@ -199,6 +214,7 @@ namespace checkdataCollect
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.Button button_AddData;
     }
 }
 

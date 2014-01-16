@@ -39,39 +39,29 @@ namespace checkdataCollect
             p.Kill();
         }
 
-
-
-
-
-
-
-
-
-        // private object threadStart = new object();               //开启子线程的标识
         private bool threadStart = false;
         Microsoft.Office.Interop.Excel.Application app;
-         Workbooks wbks;
-         Workbook r_wbk;
-         Workbook w_wbk;
-         List<peopledata> peoples=new List<peopledata>();                   //people的数据集合
-         List<String> peoplesId = new List<string>();                       //peoplesId的集合
-         Dictionary<KeyValuePair<String, String>, int> itemDic = new Dictionary<KeyValuePair<String, String>, int>();     //检查项目对应的列的字典
-         String fileName="";
-         private delegate void SetPos(int ipos);
+        Workbooks wbks;
+        Workbook r_wbk;
+        Workbook w_wbk;
+        List<peopledata> peoples=new List<peopledata>();                   //people的数据集合
+        List<peopledata> people_add = new List<peopledata>();              //people的数据集合
+        List<String> peoplesId = new List<string>();                       //peoplesId的集合
+        Dictionary<KeyValuePair<String, String>, int> itemDic = new Dictionary<KeyValuePair<String, String>, int>();     //检查项目对应的列的字典
+        String fileName="";                                                //汇总结果文件名
+        private delegate void SetPos(int ipos);
 
+        private string fileSource;
 
-         //excel里面一些位置的定义
-         public  int pID_column =1;            //体检人员的ID所在列
-         public  int PNname_column=2;          //体检人员的名字所在列
-         public  int pSex_column=3;            //性别所在列
-         public  int pAge_column=4;            //年龄所在列
-         public  int pItemSet_column=5;        //相关检查项的集合所在列
-         public  int pItem_column=6;           //检查项所在列
-         public  int pItemData_column=7;       //检查项的数据所在列
-         public  int itemBegin_column = 5;     //检查项起始列
-
-
-
+        //excel里面一些位置的定义
+        public  int pID_column =1;            //体检人员的ID所在列
+        public  int PNname_column=2;          //体检人员的名字所在列
+        public  int pSex_column=3;            //性别所在列
+        public  int pAge_column=4;            //年龄所在列
+        public  int pItemSet_column=5;        //相关检查项的集合所在列
+        public  int pItem_column=6;           //检查项所在列
+        public  int pItemData_column=7;       //检查项的数据所在列
+        public  int itemBegin_column = 5;     //检查项起始列
 
         //进度条更新函数
         private void SetTextMessage(int ipos)
@@ -124,13 +114,7 @@ namespace checkdataCollect
         private void collectdata()
         {
             openExcel(txtboxPath.Text);
-            //createExcel();
-            //Sheets shs = w_wbk.Sheets;
-            //_Worksheet _wsh = (_Worksheet)shs.get_Item(1);
-            //_wsh.Name = "汇总";
-            //_wsh.Cells[2, 2] = "测试";
-            //CloseExcel(w_wbk);
-         
+      
             String curPeopleID;                                         //存储当前的检测用户
             String prePeopleID;                                         //存储前一个用户
             Sheets r_shs = r_wbk.Sheets;                                //获取excel工作簿的所有工作表
@@ -143,15 +127,13 @@ namespace checkdataCollect
             KeyValuePair<String,String> itemset_item;
             int oldrowindex;                                            //存在旧的index
             long allrow = r_wsh.UsedRange.CurrentRegion.Rows.Count;
-            //while(i !=r_wsh.UsedRange.Cells.Rows.Count)  // 没读到行结束
-            //((Range)r_wsh.Cells[i,pID_column]).Text.ToString() !=""
+
             this.label3.Text = "正在读取数据,请稍后……";
             while(i <= allrow)
             {
                 if (curPeopleID == prePeopleID)//用户id没改变
                 {
                      itemset_item  = new KeyValuePair<String,String>(Convert.ToString(((Range)r_wsh.Cells[i,pItemSet_column]).Text),Convert.ToString(((Range)r_wsh.Cells[i,pItem_column]).Text));
-                     // this.label2.Text = i.ToString();
                      curpeople.element.Add(itemset_item, Convert.ToString(((Range)r_wsh.Cells[i, pItemData_column]).Text));     //增加检查项目
                      if (i == allrow)
                      {
@@ -177,7 +159,6 @@ namespace checkdataCollect
                       }
                       else
                       {
-                         // peoplesId.Add(curPeopleID);
                           if (prePeopleID != "")//不是第一个用户
                           {
                               oldrowindex = peoplesId.IndexOf(prePeopleID);
@@ -225,9 +206,105 @@ namespace checkdataCollect
             }
             app.AlertBeforeOverwriting = false;         // 屏蔽系统的alert
             r_wbk.Close();
-
         }
 
+        //读取一个工作簿的检查数据，并存进peoples的集合中
+        private void collectdata(string fileWay,List<peopledata> peoples)
+        {
+            openExcel(fileWay);
+
+            String curPeopleID;                                         //存储当前的检测用户
+            String prePeopleID;                                         //存储前一个用户
+            Sheets r_shs = r_wbk.Sheets;                                //获取excel工作簿的所有工作表
+            _Worksheet r_wsh = (_Worksheet)r_shs.get_Item(1);           //获取第一个工作表
+            long i = 1;                                                 //记录行的位置
+            int j = itemBegin_column;                                   //数据项的起始位置
+            curPeopleID = Convert.ToString(((Range)r_wsh.Cells[1, pID_column]).Text);
+            prePeopleID = "";
+            peopledata curpeople = new peopledata();                    // 存取当前的体检人员的数据
+            KeyValuePair<String, String> itemset_item;
+            int oldrowindex;                                            //存在旧的index
+            long allrow = r_wsh.UsedRange.CurrentRegion.Rows.Count;
+
+            this.label3.Text = "正在读取数据,请稍后……";
+            while (i <= allrow)
+            {
+                if (curPeopleID == prePeopleID)//用户id没改变
+                {
+                    itemset_item = new KeyValuePair<String, String>(Convert.ToString(((Range)r_wsh.Cells[i, pItemSet_column]).Text), Convert.ToString(((Range)r_wsh.Cells[i, pItem_column]).Text));
+                    curpeople.element.Add(itemset_item, Convert.ToString(((Range)r_wsh.Cells[i, pItemData_column]).Text));     //增加检查项目
+                    if (i == allrow)
+                    {
+                        peoples.Add(curpeople);
+
+                    }
+                }
+                else //当前用户不同与上一行的用户id
+                {
+                    //新用户添加基础信息            
+                    oldrowindex = peoplesId.IndexOf(curPeopleID);
+
+                    if (oldrowindex != -1)//已经记录过此用户
+                    {
+                        itemset_item = new KeyValuePair<String, String>(Convert.ToString(((Range)r_wsh.Cells[i, pItemSet_column]).Text), Convert.ToString(((Range)r_wsh.Cells[i, pItem_column]).Text));
+                        peoples[oldrowindex].element.Add(itemset_item, Convert.ToString(((Range)r_wsh.Cells[i, pItemData_column]).Text));     //增加检查项目
+                        oldrowindex = peoplesId.IndexOf(prePeopleID);
+                        if (oldrowindex == -1)
+                        {
+                            peoplesId.Add(prePeopleID);
+                            peoples.Add(curpeople);
+                        }
+                    }
+                    else
+                    {
+                        if (prePeopleID != "")//不是第一个用户
+                        {
+                            oldrowindex = peoplesId.IndexOf(prePeopleID);
+                            if (oldrowindex == -1)
+                            {
+                                peoplesId.Add(prePeopleID);
+                                peoples.Add(curpeople);
+                            }
+                            curpeople = new peopledata();
+                        }
+                        //添加检查项目信息
+                        itemset_item = new KeyValuePair<String, String>(Convert.ToString(((Range)r_wsh.Cells[i, pItemSet_column]).Text), Convert.ToString(((Range)r_wsh.Cells[i, pItem_column]).Text));
+                        curpeople.Id = curPeopleID;
+                        curpeople.name = Convert.ToString(((Range)r_wsh.Cells[i, PNname_column]).Text);
+                        curpeople.sex = Convert.ToString(((Range)r_wsh.Cells[i, pSex_column]).Text);
+                        curpeople.age = Convert.ToString(((Range)r_wsh.Cells[i, pAge_column]).Text);
+                        curpeople.element.Add(itemset_item, Convert.ToString(((Range)r_wsh.Cells[i, pItemData_column]).Text));     //增加检查项目  
+                        if (i == allrow)
+                        {
+                            peoples.Add(curpeople);
+
+                        }
+                    }
+                }
+                if (!itemDic.ContainsKey(itemset_item))//不包含这个项目
+                {
+                    itemDic.Add(itemset_item, j);
+                    ++j;
+                }
+                if (i < allrow)
+                {
+                    SetTextMessage((int)(i * 100 / allrow));
+                }
+                else
+                {
+                    Thread.Sleep(100);
+                    SetTextMessage(0);
+                }
+                ++i;
+                if (i <= allrow)
+                {
+                    prePeopleID = curPeopleID;
+                    curPeopleID = Convert.ToString(((Range)r_wsh.Cells[i, pID_column]).Text);
+                }
+            }
+            app.AlertBeforeOverwriting = false;         // 屏蔽系统的alert
+            r_wbk.Close();
+        }
 
         //把数据写入一个工作簿
         private void writedata()
@@ -258,7 +335,7 @@ namespace checkdataCollect
                 int itcolumn;
                 foreach (KeyValuePair<KeyValuePair<String, String>, String> it in p.element)
                 {
-                    itcolumn = itemDic[it.Key];       //获取行号
+                    itcolumn = itemDic[it.Key];             //获取行号
                     w_wsh.Cells[i, itcolumn] = it.Value;    //写入相应的值
                 }
                 SetTextMessage((int)(100 * (i -1)/ n));
@@ -274,11 +351,9 @@ namespace checkdataCollect
             this.collectbtn.Enabled = false;
             if (txtboxPath.Text != "")
             {
-               //this.Invoke(new InvokeDe)
                 Thread fThread = new Thread(new ThreadStart(solve));        //开辟一个新的线
                 fThread.IsBackground = true;
                 fThread.Start();
-                //fThread.Join();
 
                 while (true)
                 {
@@ -305,16 +380,51 @@ namespace checkdataCollect
 
         private void solve()
         {
+            collectdata();      //读取数据
+            writedata();        //写数据
+            label3.Text = "完成";
+            MessageBox.Show("处理完成");
+            app.Quit();         //退出Excel
+            KillExcel(app);
+            app = null;
+            threadStart = true;
+        }
 
-                collectdata();      //读取数据
-                writedata();        //写数据
-                label3.Text = "完成";
-                MessageBox.Show("处理完成");
-                app.Quit();         //退出Excel
-                KillExcel(app);
-                app = null;
-                threadStart = true;
+        private void MergeData(List<peopledata> peoples, List<peopledata> peopleAdd)
+        {
+            int index;
+            for (int i = 0; i < peopleAdd.Count; ++i)
+            {
+                index = peoples.IndexOf(peoples.First(a => a.Id == peopleAdd[i].Id));
+                if (index != -1)
+                {
+                    foreach (KeyValuePair<KeyValuePair<String, String>, String> item in peopleAdd[i].element)
+                    {
+                        KeyValuePair<String, String> tmp = item.Key;
+                        peoples[index].element[tmp] = item.Value;
+                    }
+                }
 
+
+            }
+        }
+
+        private void AddData(string fileWay_Destination,string fileWay_Source)
+        {
+            collectdata(fileWay_Destination,peoples);
+
+            collectdata(fileWay_Source,people_add);
+
+            MergeData(peoples,people_add);
+
+            writedata();
+
+            label3.Text = "完成";
+            MessageBox.Show("处理完成");
+            app.Quit();         //退出Excel
+            KillExcel(app);
+            app = null;
+            threadStart = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -324,7 +434,6 @@ namespace checkdataCollect
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-
             //选中实验室
             if (radioButton1.Checked == true) 
             {
@@ -352,8 +461,45 @@ namespace checkdataCollect
             {
                 MessageBox.Show("请选择一种数据格式！");          
             }   
+        }
 
+        private void button_AddData_Click(object sender, EventArgs e)
+        {
+            app = new Microsoft.Office.Interop.Excel.Application();
+            this.collectbtn.Enabled = false;
+            if (txtboxPath.Text != "")
+            {
+                Form2 f = new Form2(this.txtboxPath.Text);
+                f.ShowDialog();
 
+                if (f.fileWay_Source != "")
+                {
+                    fileSource = f.fileWay_Source;
+                    Thread fThread = new Thread(() => AddData(this.txtboxPath.Text, fileSource));        //开辟一个新的线程
+                    fThread.IsBackground = true;
+                    fThread.Start();
+
+                    while (true)
+                    {
+                        if (threadStart == true)
+                        {
+                            fThread.Abort();
+                            threadStart = false;
+                            peoples.Clear();
+                            peoplesId.Clear();
+                            itemDic.Clear();
+                            this.collectbtn.Enabled = true;
+                            break;
+                        }
+                        System.Windows.Forms.Application.DoEvents();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("请点击浏览按钮选择汇总文件所在的路径！");
+                this.collectbtn.Enabled = true;
+            }
         }
     }
 }
