@@ -136,8 +136,10 @@ namespace checkdataCollect
             Sheets r_shs = r_wbk.Sheets;                                //获取excel工作簿的所有工作表
             _Worksheet r_wsh = (_Worksheet)r_shs.get_Item(1);           //获取第一个工作表
             long i=1;                                                               //记录行的位置
+            if (Convert.ToString(((Range)r_wsh.Cells[i, pItemData_column]).Text) == "")               //第一行为空
+                i = 2;
             int j=itemBegin_column;                                     //数据项的起始位置
-            curPeopleID =Convert.ToString(((Range) r_wsh.Cells[1, pID_column]).Text);
+            curPeopleID =Convert.ToString(((Range) r_wsh.Cells[i, pID_column]).Text);
             prePeopleID = "";
             peopledata curpeople = new peopledata();                    // 存取当前的体检人员的数据
             KeyValuePair<String,String> itemset_item;
