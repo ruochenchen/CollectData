@@ -57,7 +57,8 @@ E:\Git\collectdata\obj\x86\Debug\checkdataCollect.exe
 E:\Git\collectdata\obj\x86\Debug\checkdataCollect.pdb
 E:\Git\collectdata\bin\Debug\checkdataCollect.exe
 E:\Git\collectdata\bin\Debug\checkdataCollect.pdb
-E:\Git\collectdata\obj\x86\Debug\checkdataCollect.csprojResolveAssemblyReference.cache
 E:\Git\collectdata\obj\x86\Debug\checkdataCollect.Form1.resources
 E:\Git\collectdata\obj\x86\Debug\checkdataCollect.Properties.Resources.resources
 E:\Git\collectdata\obj\x86\Debug\checkdataCollect.csproj.GenerateResource.Cache
+E:\Git\collectdata\obj\x86\Debug\checkdataCollect.csprojResolveAssemblyReference.cache
+E:\Git\collectdata\obj\x86\Debug\checkdataCollect.Form2.resources
